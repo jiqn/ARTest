@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class ARInitBall : MonoBehaviour
 {
+    public static ARInitBall Instance;
+
     public GameObject[] ballPrefab;
     public Transform BallPosi;
 
+
     private void Awake()
     {
+        Instance = this;
         ballPrefab = Resources.LoadAll<GameObject>("Balls");
     }
     // Start is called before the first frame update

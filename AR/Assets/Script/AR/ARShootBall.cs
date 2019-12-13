@@ -18,7 +18,7 @@ public class ARShootBall : MonoBehaviour
 
     private Camera camera;//记录主摄像机，用于坐标换算
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,7 +29,10 @@ public class ARShootBall : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (blTouch)
+        {
+            slip();
+        }
     }
 
     private void resetVar()//重置参数，把起始位置和终止位置设为手指按下的位置
@@ -76,13 +79,32 @@ public class ARShootBall : MonoBehaviour
     private void shootBall()
     {
         transform.gameObject.AddComponent<Rigidbody>();
+        //给精灵球添加一个刚体组件
         Rigidbody _rigBall = transform.GetComponent<Rigidbody>();
+        //局部变量获取刚体组件
         //Rigidbody _rigBall = transform.gameObject.AddComponent<Rigidbody>();
         _rigBall.velocity = offset * 0.003f * speedFlick;
-        _rigBall.AddForce(transform.parent.parent.transform.forward * ForwardForce);
+        //给精灵球一个初始速度，这个速度等于方向（单位向量）乘以速度
+        _rigBall.AddForce(camera.transform.forward * ForwardForce);
+        //给精力球一个向前方的力
         _rigBall.AddTorque(transform.right);
+        //让精灵球旋转起来
         _rigBall.drag = 0.5f;
+        //设置精灵球的阻力
         blShooted = true;
+        //这个精灵球的已经发射出去了
         transform.parent = null;
+        //扔出去之后把父级关联取消
+
+        StartCoroutine(LateInsBall());
+        //调用延时函数
     }
+
+    IEnumerator LateInsBall()
+    {
+        yield return new WaitForSeconds(1.2f);
+        //延时0.5s向下执行
+        ARInitBall.Instance.InitBall_AR();
+    }
+
 }
